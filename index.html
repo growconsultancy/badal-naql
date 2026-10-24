@@ -202,6 +202,10 @@ tr.ref td.num { color: var(--muted); }
     const d = new Date(); const s = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
     return s < FIRST_DAY ? FIRST_DAY : s;
   }
+  function realToday() {
+    const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  ["day", "fromDay", "toDay"].forEach(id => { $(id).max = realToday(); });
   $("day").value = today();
   $("toDay").value = today();
   $("fromDay").value = FIRST_DAY;
@@ -219,6 +223,7 @@ tr.ref td.num { color: var(--muted); }
     const msg = $("xlsMsg");
     const start = $("fromDay").value || FIRST_DAY;
     const end = $("toDay").value || today();
+    if (start > realToday() || end > realToday()) { msg.textContent = "No calculation for future dates. Pick dates up to today."; return; }
     if (start < FIRST_DAY) { $("fromDay").value = FIRST_DAY; msg.textContent = "The start date can't be before 23 Oct 2026. It has been set to 23 Oct 2026; tap Download again."; return; }
     if (end < start) { msg.textContent = "The end date must be on or after the start date."; return; }
     if (typeof ExcelJS === "undefined") {
@@ -322,6 +327,11 @@ tr.ref td.num { color: var(--muted); }
     $("mPrev").setAttribute("aria-pressed", method === "previous");
     const box = $("result");
     if (!prices.length) { return; }
+    if (day > realToday()) {
+      box.innerHTML = '<div class="state">No calculation for future dates. Pick today or an earlier day.</div>';
+      $("compare").innerHTML = ""; $("months").hidden = true;
+      return;
+    }
     const r = compute(day, method);
     if (!r) {
       box.innerHTML = '<div class="state">No published 95 octane prices for this period yet. Pick another day or the other average.</div>';
