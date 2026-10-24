@@ -1,0 +1,58 @@
+[
+ {
+  "date": "2026-10-02",
+  "price95": 2837000,
+  "change": -7000,
+  "source": "Al Bahaa",
+  "url": "https://www.albahaasite.com/2026/10/4.html",
+  "derived": false
+ },
+ {
+  "date": "2026-10-06",
+  "price95": 2825000,
+  "change": -12000,
+  "source": "Al Bahaa",
+  "url": "https://www.albahaasite.com/2026/10/2_0903504051.html",
+  "derived": false
+ },
+ {
+  "date": "2026-10-09",
+  "price95": 2802000,
+  "change": -23000,
+  "source": "Safir Al Chamal",
+  "url": "https://safiralchamal.com/2026/10/09/731490/",
+  "derived": false
+ },
+ {
+  "date": "2026-10-13",
+  "price95": 2795000,
+  "change": -7000,
+  "source": "Al Bahaa",
+  "url": "https://www.albahaasite.com/2026/10/1_01875029227.html",
+  "derived": false
+ },
+ {
+  "date": "2026-10-16",
+  "price95": 2773000,
+  "change": -22000,
+  "source": "LBC",
+  "url": "https://www.lbcgroup.tv/news/lebanon-news/963092/lebanon-sees-drop-in-fuel-prices/en",
+  "derived": false
+ },
+ {
+  "date": "2026-10-20",
+  "price95": 2739000,
+  "change": -34000,
+  "source": "Daily Beirut",
+  "url": "https://dailybeirut.com/en/lebanon-news/gasoline-diesel-prices-drop-gas-price-rises-local-market/",
+  "derived": false
+ },
+ {
+  "date": "2026-10-23",
+  "price95": 2686000,
+  "change": -53000,
+  "source": "Al Bahaa",
+  "url": "https://www.albahaasite.com/2026/10/2_01849588251.html",
+  "derived": false
+ }
+]
