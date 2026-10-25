@@ -431,11 +431,12 @@ tr.ref td.num { color: var(--muted); }
       const dt = new Date(Date.UTC(y, m - 1, dd));
       const notes = [];
       if (c && c.status !== "in") notes.push("Current: " + (c.status === "cap" ? "capped at 800,000" : "raised to 500,000"));
+      if (p && p.fixed) notes.push("Previous month: fixed 450,000 rate (before 23/10/2026)");
       if (p && p.status !== "in") notes.push("Previous: " + (p.status === "cap" ? "capped at 800,000" : "raised to 500,000"));
       if (!p) notes.push("Previous month: no counted schedules yet");
       const row = ws.addRow([dt, dt.toLocaleDateString("en-GB", { weekday: "long", timeZone: "UTC" }),
         c ? r0(c.avg) : null, c ? r0(c.pay) : null,
-        p ? r0(p.avg) : null, p ? r0(p.pay) : null, notes.join("; ")]);
+        p ? (p.fixed ? null : r0(p.avg)) : null, p ? r0(p.pay) : null, notes.join("; ")]);
       row.getCell(1).numFmt = "dd/mm/yyyy";
       [3, 4, 5, 6].forEach(i => row.getCell(i).numFmt = NUM);
       [4, 6].forEach(i => { row.getCell(i).font = { bold: true }; row.getCell(i).fill = { type: "pattern", pattern: "solid", fgColor: { argb: PALE } }; });
@@ -487,6 +488,7 @@ tr.ref td.num { color: var(--muted); }
       }
     } else {
       const pk = prevMonthKey(mk);
+      if (day >= FIRST_DAY && pk < monthKey(FIRST_DAY)) return { avg: null, five: null, pay: 450000, status: "in", n: 0, label: monthName(pk) + " fixed rate", derived: false, fixed: true, fixedNote: "Last month's rate: fixed 450,000 before 23 October 2026" };
       set = pool.filter(p => monthKey(p.date) === pk);
       label = monthName(pk) + ", all schedules";
     }
@@ -540,7 +542,7 @@ tr.ref td.num { color: var(--muted); }
     const parts = [];
     if (used - oldN > 0) parts.push(method === "current"
       ? "Days from 23 October 2026 use this month's prices up to each day, so later days can differ."
-      : "Days from 23 October 2026 use the " + monthName(prevMonthKey(calMonth)) + " average (last month's prices), the same amount for each of them.");
+      : (prevMonthKey(calMonth) < monthKey(FIRST_DAY) ? "Days from 23 October 2026 use last month's rate, the fixed 450,000 LBP." : "Days from 23 October 2026 use the " + monthName(prevMonthKey(calMonth)) + " average (last month's prices), the same amount for each of them."));
     if (oldN) parts.push((oldN === 1 ? "1 day" : oldN + " days") + " before 23 October 2026 " + (oldN === 1 ? "uses" : "use") + " the previous fixed rate of 450,000 LBP a day.");
     if (missing) parts.push(missing + (missing === 1 ? " selected day isn't" : " selected days aren't") + " included: there's no " + (method === "current" ? "price" : "last-month average") + " for " + (missing === 1 ? "it" : "them") + " yet.");
     $("estNote").textContent = parts.join(" ");
@@ -593,7 +595,7 @@ tr.ref td.num { color: var(--muted); }
       box.innerHTML =
         '<div class="lbl">You get for this day · ' + new Date(day + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + '</div>' +
         '<div class="amount"><span id="amtNum">' + (anim.done ? fmt(r.pay) : "0") + '</span><small>LBP</small></div>' +
-        '<div>' + (r.fixed ? '<span class="chip">Fixed rate before 23 October 2026</span>' : chip(r)) + '</div>' +
+        '<div>' + (r.fixed ? '<span class="chip">' + (r.fixedNote || 'Fixed rate before 23 October 2026') + '</span>' : chip(r)) + '</div>' +
         (r.fixed ? '' : '<div class="steps">' +
           '<div class="step"><span>Average 95 octane tank price (' + r.n + ' schedule' + (r.n > 1 ? 's' : '') + ')</span><span>' + fmt(r.avg) + '</span></div>' +
         '</div>') +
