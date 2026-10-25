@@ -612,9 +612,10 @@ tr.ref td.num { color: var(--muted); }
   $("calClear").addEventListener("click", () => { monthDays(calMonth).forEach(ds => picked.delete(ds)); renderCal(); });
 
   const anim = { done: false, start: 0, target: 0 };
+  let pumpFixed = false;
   function setPump(v, f) {
     const l = $("pumpL"), m = $("pumpLBP"); if (!l || !m) return;
-    l.textContent = (5 * f).toFixed(2);
+    l.textContent = pumpFixed ? "—" : (5 * f).toFixed(2);
     m.textContent = f >= 1 ? fmt(v) : fmt(Math.round(v * f / 500) * 500);
   }
   function runCount(target) {
@@ -654,6 +655,7 @@ tr.ref td.num { color: var(--muted); }
           '<div class="step"><span>Average 95 octane tank price (' + r.n + ' schedule' + (r.n > 1 ? 's' : '') + ')</span><span>' + fmt(r.avg) + '</span></div>' +
         '</div>') +
         (r.derived ? '<div class="flag">Includes a derived price; check it against the Ministry schedule before payroll.</div>' : '');
+      pumpFixed = !!r.fixed;
       runCount(r.pay);
     }
 
