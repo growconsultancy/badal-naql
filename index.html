@@ -209,7 +209,6 @@ tr.ref td.num { color: var(--muted); }
     <div class="state">Loading official 95 octane prices…</div>
   </section>
 
-  <section class="compare" id="compare"></section>
 
   <section class="estimate" id="estimate">
     <div class="est-head">
@@ -577,7 +576,7 @@ tr.ref td.num { color: var(--muted); }
     if (!prices.length) { return; }
     if (day > realToday()) {
       box.innerHTML = '<div class="state">No calculation for future dates. Pick today or an earlier day.</div>';
-      $("compare").innerHTML = ""; $("months").hidden = true;
+      $("months").hidden = true;
       return;
     }
     const old = day < FIRST_DAY;
@@ -596,11 +595,6 @@ tr.ref td.num { color: var(--muted); }
         (r.derived ? '<div class="flag">Includes a derived price; check it against the Ministry schedule before payroll.</div>' : '');
       runCount(r.pay);
     }
-    const c = old ? r : compute(day, "current"), p = old ? r : compute(day, "previous");
-    $("compare").innerHTML = [["Using this month's prices", c], ["Using last month's prices", p]].map(([t, x]) =>
-      '<div class="mini"><span class="lbl">' + t + '</span>' +
-      (x ? '<b>' + fmt(x.pay) + ' LBP</b>' : '<span class="sub">No data for this period</span>') +
-      '</div>').join("");
 
     {
       const pool = prices.filter(p => p.date >= CALC_FROM && p.date <= day);
