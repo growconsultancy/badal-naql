@@ -54,6 +54,11 @@ header { display: grid; gap: 4px; }
 h1 { font-family: var(--display); font-weight: 800; font-size: clamp(26px, 6vw, 34px); line-height: 1.1; margin: 0; text-wrap: balance; }
 .ar { font-family: var(--body); color: var(--muted); font-size: 14px; }
 h2 { font-family: var(--display); font-weight: 700; font-size: 17px; margin: 0; }
+h3.sec { font-family: var(--display); font-weight: 700; font-size: 15px; margin: 0; }
+.hint { font-size: 12px; color: var(--muted); }
+.hr-head { border-top: 1px solid var(--line); padding-top: 22px; margin-top: 8px; display: grid; gap: 4px; }
+.hr-head h2 { font-size: 19px; }
+.hr-head p { margin: 0; font-size: 13px; color: var(--muted); }
 .controls { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; }
 .field { display: grid; gap: 6px; }
 label, .lbl { font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
@@ -185,15 +190,16 @@ tr.ref td.num { color: var(--muted); }
 
   <div class="controls">
     <div class="field">
-      <label for="day">Working day</label>
+      <label for="day">Pick a day</label>
       <input type="date" id="day" min="2026-10-23">
     </div>
     <div class="field">
-      <span class="lbl" id="methodLbl">Average used</span>
+      <span class="lbl" id="methodLbl">How your employer calculates it</span>
       <div class="seg" role="group" aria-labelledby="methodLbl">
-        <button type="button" id="mCur" aria-pressed="true">Current month</button>
-        <button type="button" id="mPrev" aria-pressed="false">Previous month</button>
+        <button type="button" id="mCur" aria-pressed="true">This month's prices</button>
+        <button type="button" id="mPrev" aria-pressed="false">Last month's prices</button>
       </div>
+      <span class="hint">Not sure which one? Ask your employer or HR.</span>
     </div>
   </div>
 
@@ -253,8 +259,13 @@ tr.ref td.num { color: var(--muted); }
     <p class="src">Source: Decree No. 4021, Official Gazette issue 46, 22 October 2026.</p>
   </section>
 
+  <div class="hr-head">
+    <h2>For HR and payroll</h2>
+    <p>Monthly averages, the Excel export and the official fuel price list.</p>
+  </div>
+
   <section id="months" style="display:grid;gap:10px" hidden>
-    <h2>Average by month</h2>
+    <h3 class="sec">Average by month</h3>
     <div class="tablebox"><table>
       <thead><tr><th>Month</th><th style="text-align:right">Avg 95 octane tank (LBP)</th><th style="text-align:right">Daily allowance (LBP)</th></tr></thead>
       <tbody id="monthsBody"></tbody>
@@ -263,7 +274,7 @@ tr.ref td.num { color: var(--muted); }
 
   <section class="export" id="exportBox">
     <div style="display:grid;gap:4px;min-width:0">
-      <h2>Excel export</h2>
+      <h3 class="sec">Excel export</h3>
       <span class="sub">One row per day for the dates you pick (23 Oct 2026 at the earliest), both averages side by side.</span>
     </div>
     <div class="controls">
@@ -281,7 +292,7 @@ tr.ref td.num { color: var(--muted); }
   </section>
 
   <section style="display:grid;gap:10px">
-    <h2>Official 95 octane prices (LBP per 20 L tank)</h2>
+    <h3 class="sec">Official 95 octane prices (LBP per 20 L tank)</h3>
     <div class="tablebox"><table>
       <thead><tr><th>Schedule date</th><th style="text-align:right">95 octane</th><th style="text-align:right">Change</th></tr></thead>
       <tbody id="ledger"><tr><td colspan="3">No prices loaded yet.</td></tr></tbody>
@@ -477,10 +488,10 @@ tr.ref td.num { color: var(--muted); }
     $("estOut").textContent = fmt(sum) + " LBP";
     const parts = [];
     if (used - oldN > 0) parts.push(method === "current"
-      ? "Days from 23 October 2026 use the current-month average up to each day, so later days can differ."
-      : "Days from 23 October 2026 use the " + monthName(prevMonthKey(calMonth)) + " average, the same amount for each of them.");
+      ? "Days from 23 October 2026 use this month's prices up to each day, so later days can differ."
+      : "Days from 23 October 2026 use the " + monthName(prevMonthKey(calMonth)) + " average (last month's prices), the same amount for each of them.");
     if (oldN) parts.push((oldN === 1 ? "1 day" : oldN + " days") + " before 23 October 2026 " + (oldN === 1 ? "uses" : "use") + " the previous fixed rate of 450,000 LBP a day.");
-    if (missing) parts.push(missing + (missing === 1 ? " selected day isn't" : " selected days aren't") + " included: there's no " + (method === "current" ? "price" : "previous-month average") + " for " + (missing === 1 ? "it" : "them") + " yet.");
+    if (missing) parts.push(missing + (missing === 1 ? " selected day isn't" : " selected days aren't") + " included: there's no " + (method === "current" ? "price" : "last-month average") + " for " + (missing === 1 ? "it" : "them") + " yet.");
     $("estNote").textContent = parts.join(" ");
   }
   $("cal").addEventListener("click", (e) => {
@@ -513,7 +524,7 @@ tr.ref td.num { color: var(--muted); }
       box.innerHTML = '<div class="state">No published 95 octane prices for this period yet. Pick another day or the other average.</div>';
     } else {
       box.innerHTML =
-        '<div class="lbl">Allowance per attended day · ' + day + '</div>' +
+        '<div class="lbl">You get for this day · ' + new Date(day + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + '</div>' +
         '<div class="amount">' + fmt(r.pay) + '<small>LBP</small></div>' +
         '<div>' + chip(r) + '</div>' +
         '<div class="steps">' +
@@ -522,7 +533,7 @@ tr.ref td.num { color: var(--muted); }
         (r.derived ? '<div class="flag">Includes a derived price; check it against the Ministry schedule before payroll.</div>' : '');
     }
     const c = compute(day, "current"), p = compute(day, "previous");
-    $("compare").innerHTML = [["Current month average", c], ["Previous month average", p]].map(([t, x]) =>
+    $("compare").innerHTML = [["Using this month's prices", c], ["Using last month's prices", p]].map(([t, x]) =>
       '<div class="mini"><span class="lbl">' + t + '</span>' +
       (x ? '<b>' + fmt(x.pay) + ' LBP</b>' : '<span class="sub">No data for this period</span>') +
       '</div>').join("");
