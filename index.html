@@ -373,7 +373,7 @@ tr.ref td.num { color: var(--muted); }
   ["day", "fromDay", "toDay"].forEach(id => { $(id).max = realToday(); });
   $("day").value = today();
   $("toDay").value = today();
-  $("fromDay").value = (realToday().slice(0, 4) + "-01-01") < "2026-01-01" ? "2026-01-01" : (realToday().slice(0, 4) + "-01-01");
+  $("fromDay").value = realToday().slice(0, 7) + "-01";
   $("fromDay").addEventListener("change", () => {
     const f = $("fromDay").value;
     if (f && f < "2026-01-01") $("fromDay").value = "2026-01-01";
