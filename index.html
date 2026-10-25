@@ -400,17 +400,14 @@ tr.ref td.num { color: var(--muted); }
     const BLUE = "FF20518C", PALE = "FFE3EBF6", NUM = "#,##0";
     const wb = new ExcelJS.Workbook();
     wb.creator = "Grow Consultancy";
-    const logoSrc = document.querySelector(".brand img").src.split(",")[1];
-    const logoId = wb.addImage({ base64: logoSrc, extension: "png" });
     const thin = { style: "thin", color: { argb: "FFDBE2EC" } };
 
     function banner(ws, title, lastCol) {
-      ws.addImage(logoId, { tl: { col: 0.15, row: 0.15 }, ext: { width: 52, height: 52 } });
       ws.getRow(1).height = 24; ws.getRow(2).height = 18; ws.getRow(3).height = 20;
-      ws.mergeCells(1, 2, 1, lastCol); ws.mergeCells(2, 2, 2, lastCol); ws.mergeCells(3, 2, 3, lastCol);
-      const t = ws.getCell(1, 2); t.value = "Grow Consultancy · " + title; t.font = { bold: true, size: 14, color: { argb: BLUE } };
-      const st = ws.getCell(2, 2); st.value = "Decree 4021 · 5 litres of 95 octane per attended day · min 500,000 / max 800,000 LBP · prices counted from 23/10/2026"; st.font = { size: 10, color: { argb: "FF5A6680" } };
-      const ct = ws.getCell(3, 2); ct.value = "info@growconsultancy.net  ·  +961 70 405958"; ct.font = { size: 10, bold: true, color: { argb: BLUE } }; ct.alignment = { vertical: "top" };
+      ws.mergeCells(1, 1, 1, lastCol); ws.mergeCells(2, 1, 2, lastCol); ws.mergeCells(3, 1, 3, lastCol);
+      const t = ws.getCell(1, 1); t.value = "Grow Consultancy · " + title; t.font = { bold: true, size: 14, color: { argb: BLUE } };
+      const st = ws.getCell(2, 1); st.value = "Decree 4021 · 5 litres of 95 octane per attended day · min 500,000 / max 800,000 LBP · prices counted from 23/10/2026"; st.font = { size: 10, color: { argb: "FF5A6680" } };
+      const ct = ws.getCell(3, 1); ct.value = "info@growconsultancy.net  ·  +961 70 405958"; ct.font = { size: 10, bold: true, color: { argb: BLUE } }; ct.alignment = { vertical: "top" };
     }
     function headRow(row) {
       row.height = 42;
