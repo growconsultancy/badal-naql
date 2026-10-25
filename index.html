@@ -201,7 +201,7 @@ tr.ref td.num { color: var(--muted); }
   <div class="controls">
     <div class="field">
       <label for="day">Pick a day</label>
-      <input type="date" id="day" min="2026-10-23">
+      <input type="date" id="day" min="2026-01-01">
     </div>
     <div class="field">
       <span class="lbl" id="methodLbl">How your employer calculates it</span>
@@ -584,7 +584,8 @@ tr.ref td.num { color: var(--muted); }
       $("compare").innerHTML = ""; $("months").hidden = true;
       return;
     }
-    const r = compute(day, method);
+    const old = day < FIRST_DAY;
+    const r = old ? { pay: OLD_RATE, n: 0, avg: 0, status: "in", fixed: true } : compute(day, method);
     renderCal();
     if (!r) {
       box.innerHTML = '<div class="state">No published 95 octane prices for this period yet. Pick another day or the other average.</div>';
@@ -592,15 +593,15 @@ tr.ref td.num { color: var(--muted); }
       box.innerHTML =
         '<div class="lbl">You get for this day · ' + new Date(day + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) + '</div>' +
         '<div class="amount"><span id="amtNum">' + (anim.done ? fmt(r.pay) : "0") + '</span><small>LBP</small></div>' +
-        '<div>' + chip(r) + '</div>' +
-        '<div class="steps">' +
+        '<div>' + (r.fixed ? '<span class="chip">Fixed rate before 23 October 2026</span>' : chip(r)) + '</div>' +
+        (r.fixed ? '' : '<div class="steps">' +
           '<div class="step"><span>Average 95 octane tank price (' + r.n + ' schedule' + (r.n > 1 ? 's' : '') + ')</span><span>' + fmt(r.avg) + '</span></div>' +
-        '</div>' +
+        '</div>') +
         (r.derived ? '<div class="flag">Includes a derived price; check it against the Ministry schedule before payroll.</div>' : '') +
         '<div class="credit">Grow Badal Naql · growconsultancy.net</div>';
       runCount(r.pay);
     }
-    const c = compute(day, "current"), p = compute(day, "previous");
+    const c = old ? r : compute(day, "current"), p = old ? r : compute(day, "previous");
     $("compare").innerHTML = [["Using this month's prices", c], ["Using last month's prices", p]].map(([t, x]) =>
       '<div class="mini"><span class="lbl">' + t + '</span>' +
       (x ? '<b>' + fmt(x.pay) + ' LBP</b>' : '<span class="sub">No data for this period</span>') +
