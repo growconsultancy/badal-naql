@@ -440,15 +440,18 @@ tr.ref td.num { color: var(--muted); }
       row.getCell(1).numFmt = "dd/mm/yyyy";
       [3, 4, 5, 6].forEach(i => row.getCell(i).numFmt = NUM);
       [4, 6].forEach(i => { row.getCell(i).font = { bold: true }; row.getCell(i).fill = { type: "pattern", pattern: "solid", fgColor: { argb: PALE } }; });
-      row.eachCell({ includeEmpty: true }, cell => cell.border = { bottom: thin });
+      row.eachCell({ includeEmpty: true }, cell => { cell.border = { bottom: thin }; cell.protection = { locked: false }; });
       n++;
     }
 
+    const lastData = Math.max(5, ws.lastRow.number);
     ws.addRow([]);
     const legal = ws.addRow(["© 2026 Grow Consultancy. All rights reserved."]);
     ws.mergeCells(legal.number, 1, legal.number, widths.length);
     legal.getCell(1).font = { size: 9, italic: true, color: { argb: "FF5A6680" } };
     legal.getCell(1).alignment = { wrapText: true, vertical: "top" };
+    ws.autoFilter = { from: { row: 4, column: 1 }, to: { row: lastData, column: widths.length } };
+    await ws.protect("GrowBN#2026", { selectLockedCells: true, selectUnlockedCells: true, autoFilter: true, sort: true, formatCells: false, formatColumns: false, formatRows: false, insertRows: false, deleteRows: false, insertColumns: false, deleteColumns: false });
     const buf = await wb.xlsx.writeBuffer();
     try {
       await downloads.save({ filename: "Grow - Transport allowance " + start.split("-").reverse().join("-") + " to " + end.split("-").reverse().join("-") + ".xlsx", data: new Blob([buf]) });
