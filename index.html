@@ -106,6 +106,7 @@ tr.ref td.num { color: var(--muted); }
 .wa img, .wa svg { width: 30px; height: 30px; display: block; flex: none; }
 .wa:hover { border-color: var(--wa); }
 #mailBtn:hover { border-color: var(--accent); }
+.credit { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: .02em; text-align: right; }
 .legal { flex-basis: 100%; margin: 6px 0 0; font-size: 12px; line-height: 1.5; color: var(--muted); max-width: 75ch; }
 .toast { flex-basis: 100%; font-size: 13px; color: var(--accent); }
 .wa:focus-visible { outline: 2px solid var(--wa); outline-offset: 3px; }
@@ -580,7 +581,8 @@ tr.ref td.num { color: var(--muted); }
         '<div class="steps">' +
           '<div class="step"><span>Average 95 octane tank price (' + r.n + ' schedule' + (r.n > 1 ? 's' : '') + ')</span><span>' + fmt(r.avg) + '</span></div>' +
         '</div>' +
-        (r.derived ? '<div class="flag">Includes a derived price; check it against the Ministry schedule before payroll.</div>' : '');
+        (r.derived ? '<div class="flag">Includes a derived price; check it against the Ministry schedule before payroll.</div>' : '') +
+        '<div class="credit">Grow Badal Naql · growconsultancy.net</div>';
     }
     const c = compute(day, "current"), p = compute(day, "previous");
     $("compare").innerHTML = [["Using this month's prices", c], ["Using last month's prices", p]].map(([t, x]) =>
