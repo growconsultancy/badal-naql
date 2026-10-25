@@ -417,7 +417,7 @@ tr.ref td.num { color: var(--muted); }
       row.eachCell(c => { c.font = { bold: true, color: { argb: "FFFFFFFF" } }; c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: BLUE } }; c.alignment = { wrapText: true, vertical: "middle" }; });
     }
 
-    const ws = wb.addWorksheet("Daily allowance", { views: [{ state: "frozen", xSplit: 1, ySplit: 4 }] });
+    const ws = wb.addWorksheet("Daily allowance", { views: [{ state: "frozen", xSplit: 0, ySplit: 4 }] });
     const widths = [12, 11, 22, 20];
     ws.columns = widths.map(w => ({ width: w }));
     banner(ws, "Daily transportation allowance", widths.length);
