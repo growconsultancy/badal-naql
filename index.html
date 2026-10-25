@@ -197,13 +197,29 @@ tr.ref td.num { color: var(--muted); }
       <p>You get the value of <b>5 litres of fuel</b> for every day you go to work. Pick a day below to see your amount.</p>
     </div>
     <svg class="tank" viewBox="0 0 500 252" role="img" aria-label="A fuel pump filling a 20 litre can with 5 litres, the daily allowance">
-        <rect x="10" y="229" width="134" height="13" rx="3" style="fill:var(--steel-dk)"/>
+        <defs>
+          <linearGradient id="gBody" x1="0" x2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".5"/><stop offset=".45" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity=".14"/></linearGradient>
+          <linearGradient id="gSign" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".28"/><stop offset=".55" stop-color="#ffffff" stop-opacity="0"/><stop offset="1" stop-color="#000000" stop-opacity=".2"/></linearGradient>
+          <linearGradient id="gGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset=".45" stop-color="#ffffff" stop-opacity="0"/></linearGradient>
+          <linearGradient id="gBase" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity=".25"/><stop offset="1" stop-color="#000000" stop-opacity=".2"/></linearGradient>
+          <radialGradient id="gShadow"><stop offset="0" stop-color="#000000" stop-opacity=".22"/><stop offset="1" stop-color="#000000" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse cx="77" cy="243" rx="80" ry="7" fill="url(#gShadow)"/>
+        <ellipse cx="380" cy="234" rx="66" ry="6" fill="url(#gShadow)"/>
+        <rect x="8" y="227" width="138" height="15" rx="3" style="fill:var(--steel)"/>
+        <rect x="8" y="227" width="138" height="15" rx="3" fill="url(#gBase)"/>
+        <rect x="8" y="238" width="138" height="4" rx="2" style="fill:var(--steel-dk)"/>
         <rect x="22" y="40" width="110" height="190" rx="6" style="fill:var(--surface);stroke:var(--accent)" stroke-width="3"/>
+        <rect x="23.5" y="41.5" width="107" height="187" rx="5" fill="url(#gBody)"/>
         <rect x="23.5" y="44" width="9" height="184" style="fill:var(--accent-soft)"/>
         <rect x="121.5" y="44" width="9" height="184" style="fill:var(--accent-soft)"/>
         <rect x="16" y="16" width="122" height="30" rx="5" style="fill:var(--accent)"/>
+        <rect x="16" y="16" width="122" height="30" rx="5" fill="url(#gSign)"/>
+        <rect x="20" y="44" width="114" height="3" rx="1.5" fill="#000000" opacity=".12"/>
         <text x="77" y="36" class="pump-h" text-anchor="middle">95 OCTANE</text>
-        <rect x="33" y="54" width="88" height="70" rx="4" style="fill:#18202c"/>
+        <rect x="29" y="50" width="96" height="78" rx="7" style="fill:#3b4554"/>
+        <rect x="33" y="54" width="88" height="70" rx="4" style="fill:#141b25"/>
+        <rect x="33" y="54" width="88" height="70" rx="4" fill="url(#gGlass)"/>
         <text x="40" y="66" class="pump-k">LBP</text>
         <text x="114" y="82" class="pump-v" text-anchor="end" id="pumpLBP">0</text>
         <line x1="40" y1="88" x2="114" y2="88" style="stroke:#2c3747" stroke-width="1.2"/>
@@ -212,11 +228,23 @@ tr.ref td.num { color: var(--muted); }
         <rect x="37" y="134" width="80" height="20" rx="3" style="fill:var(--fuel)"/>
         <text x="77" y="148" class="pump-g" text-anchor="middle">95</text>
         <rect x="37" y="163" width="80" height="58" rx="3" style="fill:var(--accent-soft)"/>
-        <g style="stroke:var(--accent)" stroke-width="2.5" opacity=".35" stroke-linecap="round">
-          <line x1="45" y1="174" x2="109" y2="174"/><line x1="45" y1="185" x2="109" y2="185"/><line x1="45" y1="196" x2="109" y2="196"/><line x1="45" y1="207" x2="109" y2="207"/>
+        <g style="fill:var(--surface);stroke:var(--accent)" stroke-width="1" opacity=".9">
+          <rect x="44" y="169" width="12" height="8" rx="2"/><rect x="60" y="169" width="12" height="8" rx="2"/><rect x="76" y="169" width="12" height="8" rx="2"/>
+          <rect x="44" y="181" width="12" height="8" rx="2"/><rect x="60" y="181" width="12" height="8" rx="2"/><rect x="76" y="181" width="12" height="8" rx="2"/>
+        </g>
+        <rect x="94" y="169" width="16" height="20" rx="2" style="fill:#3b4554"/>
+        <rect x="97" y="177" width="10" height="2" rx="1" style="fill:#141b25"/>
+        <g style="stroke:var(--accent)" stroke-width="2.5" opacity=".3" stroke-linecap="round">
+          <line x1="45" y1="201" x2="109" y2="201"/><line x1="45" y1="210" x2="109" y2="210"/>
         </g>
         <rect x="130" y="88" width="12" height="32" rx="3" style="fill:var(--steel-dk)"/>
-        <path d="M140 103.5 C 168 196, 176 86, 217 59.5" style="fill:none;stroke:var(--hose)" stroke-width="7.5" stroke-linecap="round"/>
+        <g fill="none" stroke-linecap="round">
+          <path d="M140 103.5 C 168 196, 176 86, 217 59.5" style="stroke:var(--hose)" stroke-width="8.5"/>
+          <path d="M140 103.5 C 168 196, 176 86, 217 59.5" stroke="#000000" stroke-width="8.5" stroke-dasharray="1.4 3.4" opacity=".3"/>
+          <path d="M140 103.5 C 168 196, 176 86, 217 59.5" transform="translate(-1.3 -1.8)" stroke="#ffffff" stroke-width="1.8" opacity=".2"/>
+        </g>
+        <rect x="134" y="97" width="12" height="13" rx="2" style="fill:var(--steel)"/>
+        <rect x="134" y="97" width="12" height="13" rx="2" fill="url(#gBase)"/>
         <g transform="translate(276 40)">
           <defs><clipPath id="tankBody"><rect x="48" y="58" width="108" height="134" rx="16"/></clipPath></defs>
           <rect x="96" y="30" width="52" height="34" rx="10" style="fill:none;stroke:var(--accent)" stroke-width="7"/>
