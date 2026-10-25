@@ -424,7 +424,7 @@ tr.ref td.num { color: var(--muted); }
     headRow(ws.getRow(4));
     ["Date", "Day", "Current month: avg tank price (LBP)", "Current month: allowance (LBP)"].forEach((h, i) => ws.getCell(4, i + 1).value = h);
     headRow(ws.getRow(4));
-    let n = 0;
+    let n = 0, sumPay = 0;
     for (let d = start; d <= end; d = addDay(d)) {
       const oldDay = d < FIRST_DAY;
       const fx = { pay: OLD_RATE, fixed: true, status: "in" };
@@ -433,6 +433,7 @@ tr.ref td.num { color: var(--muted); }
       const dt = new Date(Date.UTC(y, m - 1, dd));
       const row = ws.addRow([dt, dt.toLocaleDateString("en-GB", { weekday: "long", timeZone: "UTC" }),
         c ? (c.fixed ? null : r0(c.avg)) : null, c ? r0(c.pay) : null]);
+      if (c) sumPay += r0(c.pay);
       row.getCell(1).numFmt = "dd/mm/yyyy";
       [3, 4].forEach(i => row.getCell(i).numFmt = NUM);
       [4].forEach(i => { row.getCell(i).font = { bold: true }; row.getCell(i).fill = { type: "pattern", pattern: "solid", fgColor: { argb: PALE } }; });
@@ -441,6 +442,10 @@ tr.ref td.num { color: var(--muted); }
     }
 
     const lastData = Math.max(5, ws.lastRow.number);
+    const tot = ws.addRow(["Total", { formula: "SUBTOTAL(103,A5:A" + lastData + ")", result: n }, null, { formula: "SUBTOTAL(109,D5:D" + lastData + ")", result: sumPay }]);
+    tot.height = 22;
+    tot.getCell(2).numFmt = '0 "days"'; tot.getCell(4).numFmt = NUM;
+    tot.eachCell({ includeEmpty: true }, cell => { cell.font = { bold: true, color: { argb: BLUE } }; cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: PALE } }; cell.border = { top: { style: "medium", color: { argb: BLUE } } }; cell.alignment = { vertical: "middle" }; });
     ws.addRow([]);
     const legal = ws.addRow(["© 2026 Grow Consultancy. All rights reserved."]);
     ws.mergeCells(legal.number, 1, legal.number, widths.length);
