@@ -153,6 +153,14 @@ tr.ref td.num { color: var(--muted); }
 .card h3 { margin: 4px 0 0; font-family: var(--display); font-size: 15px; font-weight: 700; }
 .card p { margin: 0; font-size: 14px; color: var(--muted); }
 .src { margin: 0; font-size: 12px; color: var(--muted); }
+.feedback { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 18px; display: grid; gap: 12px; }
+.feedback .sub { margin: 0; font-size: 13px; color: var(--muted); }
+.fb-fields { display: grid; gap: 12px; max-width: 560px; }
+.fb-fields input, .fb-fields textarea { font: inherit; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); width: 100%; box-sizing: border-box; resize: vertical; }
+.fb-fields input:focus-visible, .fb-fields textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.fb-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.fb-send { display: inline-block; text-decoration: none; background: var(--wa) !important; }
+.fb-send[aria-disabled="true"] { opacity: .45; pointer-events: none; }
 .state { padding: 18px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); font-size: 14px; }
 @media (prefers-reduced-motion: no-preference) { .amount { transition: opacity .2s; } }
 </style>
@@ -257,6 +265,28 @@ tr.ref td.num { color: var(--muted); }
       </article>
     </div>
     <p class="src">Source: Decree No. 4021, Official Gazette issue 46, 22 October 2026.</p>
+  </section>
+
+  <section class="feedback" id="feedback">
+    <div class="est-head">
+      <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><path d="M4.5 6.5A2.5 2.5 0 0 1 7 4h10a2.5 2.5 0 0 1 2.5 2.5v7A2.5 2.5 0 0 1 17 16h-6l-4.5 4v-4H7a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M8.5 9h7M8.5 12h4.5"/></svg>
+      <h2>Questions or comments?</h2>
+    </div>
+    <p class="sub">Write your message below. Tapping the button opens WhatsApp with it ready to send to us.</p>
+    <div class="fb-fields">
+      <div class="field">
+        <label for="fbName">Your name (optional)</label>
+        <input type="text" id="fbName" maxlength="80" autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="fbMsg">Your message</label>
+        <textarea id="fbMsg" rows="4" maxlength="1000" placeholder="e.g. My employer pays the allowance monthly. Which average should they use?"></textarea>
+      </div>
+    </div>
+    <div class="fb-actions">
+      <a class="btn fb-send" id="fbSend" href="https://wa.me/96170405958" target="_blank" rel="noopener" aria-disabled="true">Send on WhatsApp</a>
+      <span class="sub" id="fbHint">Write a message first.</span>
+    </div>
   </section>
 
   <div class="hr-head">
@@ -421,6 +451,16 @@ tr.ref td.num { color: var(--muted); }
       msg.textContent = e && e.code === "declined" ? "Download cancelled." : "The file could not be saved here (" + ((e && e.code) || "error") + ").";
     }
   }
+  function updateFb() {
+    const msg = $("fbMsg").value.trim(), name = $("fbName").value.trim();
+    const ok = msg.length > 0;
+    const text = "Badal Naql" + (name ? " – " + name : "") + ":\n" + msg;
+    $("fbSend").href = "https://wa.me/96170405958?text=" + encodeURIComponent(text);
+    $("fbSend").setAttribute("aria-disabled", String(!ok));
+    $("fbHint").textContent = ok ? "WhatsApp will open; tap send there." : "Write a message first.";
+  }
+  $("fbMsg").addEventListener("input", updateFb);
+  $("fbName").addEventListener("input", updateFb);
   $("xlsBtn").addEventListener("click", exportXlsx);
 
   function compute(day, how) {
