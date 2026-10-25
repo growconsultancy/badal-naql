@@ -568,7 +568,7 @@ tr.ref td.num { color: var(--muted); }
   }
   function countStep(t) {
     const el = $("amtNum");
-    const k = Math.min(1, (t - anim.start) / 2000), e = 1 - Math.pow(1 - k, 3);
+    const k = Math.min(1, (t - anim.start) / 1500), e = 1 - Math.pow(1 - k, 3);
     if (k < 1) { if (el) el.textContent = fmt(Math.round(anim.target * e / 500) * 500); requestAnimationFrame(countStep); }
     else { anim.done = true; if (el) el.textContent = fmt(anim.target); }
   }
