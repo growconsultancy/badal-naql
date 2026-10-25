@@ -203,14 +203,6 @@ tr.ref td.num { color: var(--muted); }
       <label for="day">Pick a day</label>
       <input type="date" id="day" min="2026-01-01">
     </div>
-    <div class="field">
-      <span class="lbl" id="methodLbl">How your employer calculates it</span>
-      <div class="seg" role="group" aria-labelledby="methodLbl">
-        <button type="button" id="mCur" aria-pressed="true">This month's prices</button>
-        <button type="button" id="mPrev" aria-pressed="false">Last month's prices</button>
-      </div>
-      <span class="hint">Not sure which one? Ask your employer or HR.</span>
-    </div>
   </div>
 
   <section class="result" id="result" aria-live="polite">
@@ -581,8 +573,6 @@ tr.ref td.num { color: var(--muted); }
 
   function render() {
     const day = $("day").value || today();
-    $("mCur").setAttribute("aria-pressed", method === "current");
-    $("mPrev").setAttribute("aria-pressed", method === "previous");
     const box = $("result");
     if (!prices.length) { return; }
     if (day > realToday()) {
@@ -637,8 +627,6 @@ tr.ref td.num { color: var(--muted); }
   }
 
   $("day").addEventListener("change", render);
-  $("mCur").addEventListener("click", () => { method = "current"; render(); });
-  $("mPrev").addEventListener("click", () => { method = "previous"; render(); });
 
   function setPrices(list) {
     const byDate = {};
