@@ -121,17 +121,20 @@ tr.ref td.num { color: var(--muted); }
 .hero h1 { margin: 0 0 8px; }
 .hero p { margin: 0; font-size: 15px; color: var(--fg); max-width: 46ch; }
 .hero p b { color: var(--accent); }
-.tank { width: 340px; height: auto; max-width: 100%; }
+.tank { width: 380px; height: auto; max-width: 100%; }
 .pump-k { font: 600 7px var(--body); letter-spacing: .1em; fill: #8a96a8; }
 .pump-h { font: 800 11px var(--display); letter-spacing: .12em; fill: #ffffff; }
-.pump-p { font: 600 10px var(--mono); fill: #ffb547; font-variant-numeric: tabular-nums; }
 .pump-v { font: 700 15px var(--mono); fill: #ffb547; font-variant-numeric: tabular-nums; }
 .pump-g { font: 800 12px var(--display); fill: #ffffff; }
 .tank .fuel { transform-box: fill-box; transform-origin: 50% 100%; }
+.tank .stream { opacity: 0; }
 @media (prefers-reduced-motion: no-preference) {
   .tank .fuel { animation: fillUp 1.5s cubic-bezier(.2,.7,.3,1) both; }
+  .tank .stream { animation: pour 1.6s linear both, flow .3s linear 6; }
   .tank .tank-hi, .tank .tank-sub { animation: fadeIn .4s 1.3s both; }
 }
+@keyframes pour { 0% { opacity: 0; } 6% { opacity: .95; } 85% { opacity: .95; } 100% { opacity: 0; } }
+@keyframes flow { to { stroke-dashoffset: -14; } }
 @keyframes fillUp { from { transform: scaleY(0); } to { transform: scaleY(1); } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .tank-lbl { font: 600 13px var(--mono); fill: var(--muted); }
@@ -193,36 +196,34 @@ tr.ref td.num { color: var(--muted); }
       <h1>How much is your transport allowance today?</h1>
       <p>You get the value of <b>5 litres of fuel</b> for every day you go to work. Pick a day below to see your amount.</p>
     </div>
-    <svg class="tank" viewBox="0 0 440 252" role="img" aria-label="A fuel pump filling a 20 litre can with 5 litres, the daily allowance">
+    <svg class="tank" viewBox="0 0 500 252" role="img" aria-label="A fuel pump filling a 20 litre can with 5 litres, the daily allowance">
         <rect x="10" y="229" width="134" height="13" rx="3" style="fill:var(--steel-dk)"/>
         <rect x="22" y="40" width="110" height="190" rx="6" style="fill:var(--surface);stroke:var(--accent)" stroke-width="3"/>
         <rect x="23.5" y="44" width="9" height="184" style="fill:var(--accent-soft)"/>
         <rect x="121.5" y="44" width="9" height="184" style="fill:var(--accent-soft)"/>
         <rect x="16" y="16" width="122" height="30" rx="5" style="fill:var(--accent)"/>
         <text x="77" y="36" class="pump-h" text-anchor="middle">95 OCTANE</text>
-        <rect x="33" y="54" width="88" height="84" rx="4" style="fill:#18202c"/>
+        <rect x="33" y="54" width="88" height="70" rx="4" style="fill:#18202c"/>
         <text x="40" y="66" class="pump-k">LBP</text>
         <text x="114" y="82" class="pump-v" text-anchor="end" id="pumpLBP">0</text>
         <line x1="40" y1="88" x2="114" y2="88" style="stroke:#2c3747" stroke-width="1.2"/>
         <text x="40" y="98" class="pump-k">LITRES</text>
         <text x="114" y="114" class="pump-v" text-anchor="end" id="pumpL">0.00</text>
-        <line x1="40" y1="120" x2="114" y2="120" style="stroke:#2c3747" stroke-width="1.2"/>
-        <text x="40" y="131" class="pump-k">PER L</text>
-        <text x="114" y="131" class="pump-p" text-anchor="end" id="pumpP">—</text>
-        <rect x="37" y="146" width="80" height="20" rx="3" style="fill:var(--fuel)"/>
-        <text x="77" y="160" class="pump-g" text-anchor="middle">95</text>
-        <rect x="37" y="173" width="80" height="48" rx="3" style="fill:var(--accent-soft)"/>
+        <rect x="37" y="134" width="80" height="20" rx="3" style="fill:var(--fuel)"/>
+        <text x="77" y="148" class="pump-g" text-anchor="middle">95</text>
+        <rect x="37" y="163" width="80" height="58" rx="3" style="fill:var(--accent-soft)"/>
         <g style="stroke:var(--accent)" stroke-width="2.5" opacity=".35" stroke-linecap="round">
-          <line x1="45" y1="182" x2="109" y2="182"/><line x1="45" y1="191" x2="109" y2="191"/><line x1="45" y1="200" x2="109" y2="200"/><line x1="45" y1="209" x2="109" y2="209"/>
+          <line x1="45" y1="174" x2="109" y2="174"/><line x1="45" y1="185" x2="109" y2="185"/><line x1="45" y1="196" x2="109" y2="196"/><line x1="45" y1="207" x2="109" y2="207"/>
         </g>
-        <rect x="130" y="60" width="12" height="34" rx="3" style="fill:var(--steel-dk)"/>
-        <line x1="138" y1="72" x2="158" y2="60.5" style="stroke:var(--hose)" stroke-width="7.5" stroke-linecap="round"/>
-        <g transform="translate(216 40)">
+        <rect x="130" y="88" width="12" height="32" rx="3" style="fill:var(--steel-dk)"/>
+        <line x1="140" y1="103.5" x2="217" y2="59.5" style="stroke:var(--hose)" stroke-width="7.5" stroke-linecap="round"/>
+        <g transform="translate(276 40)">
           <defs><clipPath id="tankBody"><rect x="48" y="58" width="108" height="134" rx="16"/></clipPath></defs>
           <rect x="96" y="30" width="52" height="34" rx="10" style="fill:none;stroke:var(--accent)" stroke-width="7"/>
           <path d="M58 60 L40 38 L56 26 L76 50 Z" style="fill:var(--accent)"/>
           <rect x="48" y="58" width="108" height="134" rx="16" style="fill:var(--surface)"/>
           <g clip-path="url(#tankBody)">
+            <path class="stream" d="M66 56 Q 72 70 74 90 L74 194" style="fill:none;stroke:var(--fuel)" stroke-width="7" stroke-linecap="round" stroke-dasharray="9 5"/>
             <g class="fuel">
               <rect x="48" y="158.5" width="108" height="34" style="fill:var(--fuel)"/>
               <path d="M48 158.5 q13.5 -6 27 0 t27 0 t27 0 t27 0 v6 h-108 z" style="fill:var(--fuel);opacity:.55"/>
@@ -238,7 +239,7 @@ tr.ref td.num { color: var(--muted); }
           <text x="180" y="163" class="tank-lbl tank-hi">5 L</text>
           <text x="180" y="180" class="tank-sub">a day</text>
         </g>
-        <g transform="translate(264 71) rotate(32) scale(-0.86 0.86)">
+        <g transform="translate(324 71) rotate(32) scale(-0.86 0.86)">
           <path d="M1 0 C 16 -1, 31 -4, 46 -3" style="fill:none;stroke:var(--steel)" stroke-width="7"/>
           <path d="M13 -0.6 C 22 -1.6, 32 -3.6, 43 -3.2" style="fill:none;stroke:var(--steel-dk)" stroke-width="8.6" stroke-dasharray="1.6 3.2"/>
           <path d="M1 0 L 10 -0.4" style="fill:none;stroke:var(--steel-lt)" stroke-width="7.4"/>
@@ -654,7 +655,6 @@ tr.ref td.num { color: var(--muted); }
         '</div>') +
         (r.derived ? '<div class="flag">Includes a derived price; check it against the Ministry schedule before payroll.</div>' : '');
       runCount(r.pay);
-      { const pp = $("pumpP"); if (pp) pp.textContent = r.fixed || !r.avg ? "—" : fmt(r.avg / 20); }
     }
 
     {
