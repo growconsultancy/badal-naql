@@ -461,6 +461,12 @@ tr.ref td.num { color: var(--muted); }
   }
   $("fbMsg").addEventListener("input", updateFb);
   $("fbName").addEventListener("input", updateFb);
+  $("fbSend").addEventListener("click", () => {
+    setTimeout(() => {
+      $("fbMsg").value = ""; $("fbName").value = ""; updateFb();
+      $("fbHint").textContent = "Opened in WhatsApp. Tap send there to deliver it.";
+    }, 400);
+  });
   $("xlsBtn").addEventListener("click", exportXlsx);
 
   function compute(day, how) {
