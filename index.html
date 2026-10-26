@@ -148,12 +148,16 @@ tr.ref td.num { color: var(--muted); }
 .ico { width: 26px; height: 26px; fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 .estimate { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 18px; display: grid; gap: 12px; }
 .est-head { display: flex; align-items: center; gap: 10px; }
-.cal-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; max-width: 420px; }
 .cal-bar b { font-family: var(--display); font-size: 17px; }
 .calnav { font: 600 22px/1 var(--body); width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--accent-soft); color: var(--accent); cursor: pointer; }
 .calnav:disabled { opacity: .35; cursor: default; }
 .cal-quick { display: flex; gap: 16px; }
 .linkbtn { font: inherit; font-size: 13px; font-weight: 600; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.cal-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; max-width: 880px; }
+.cal-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 28px; max-width: 880px; }
+@media (max-width: 640px) { .cal-pair { grid-template-columns: 1fr; } }
+.calm { display: grid; gap: 8px; min-width: 0; }
+.calm-t { font-family: var(--display); font-weight: 700; font-size: 14px; color: var(--accent); }
 .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; max-width: 420px; }
 .dow { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); text-align: center; padding-bottom: 2px; }
 .day { font: 600 15px var(--body); font-variant-numeric: tabular-nums; aspect-ratio: 1; max-width: 100%; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; }
@@ -301,9 +305,9 @@ tr.ref td.num { color: var(--muted); }
   <section class="estimate" id="estimate">
     <div class="est-head">
       <svg viewBox="0 0 24 24" class="ico" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
-      <h2>Your total for the month</h2>
+      <h2>Your total for the period</h2>
     </div>
-    <p class="sub">Pick the month, then tap each day you went to work.</p>
+    <p class="sub">Two months are shown side by side, so you can cover a pay period that runs across months (for example 21 September to 20 October). Tap each day you went to work.</p>
     <div class="cal-bar">
       <button type="button" class="calnav" id="calPrev" aria-label="Previous month">&#8249;</button>
       <b id="calTitle"></b>
@@ -313,7 +317,7 @@ tr.ref td.num { color: var(--muted); }
       <button type="button" class="linkbtn" id="calWeekdays">Select Mon to Fri</button>
       <button type="button" class="linkbtn" id="calClear">Clear</button>
     </div>
-    <div class="cal" id="cal" role="group" aria-label="Days you went to work"></div>
+    <div class="cal-pair" id="cal" role="group" aria-label="Days you went to work"></div>
     <div class="est-out">
       <span class="lbl" id="calCount">No days selected</span>
       <b id="estOut">0 LBP</b>
@@ -568,31 +572,38 @@ tr.ref td.num { color: var(--muted); }
   const OLD_RATE = 450000, OLD_FROM = "2026-01-01";
   const selectable = (ds) => ds >= OLD_FROM && ds <= realToday();
   function dayPay(ds) { if (ds < FIRST_DAY) return { pay: OLD_RATE, old: true }; const r = compute(ds, method); return r ? { pay: r.pay, old: false } : null; }
-  function renderCal() {
-    const k = calMonth, t = realToday();
-    $("calTitle").textContent = monthName(k);
-    $("calPrev").disabled = k <= monthKey("2026-01-01");
-    $("calNext").disabled = k >= monthKey(t);
+  const winMonths = () => [prevMonthKey(calMonth), calMonth];
+  function monthGrid(k, t) {
     const [y, m] = k.split("-").map(Number);
     const lead = (new Date(y, m - 1, 1).getDay() + 6) % 7;
-    let h = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(d => '<span class="dow">' + d + '</span>').join("");
+    let h = '<div class="calm"><div class="calm-t">' + monthName(k) + '</div><div class="cal">';
+    h += ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(d => '<span class="dow">' + d + '</span>').join("");
     for (let i = 0; i < lead; i++) h += '<span></span>';
     monthDays(k).forEach(ds => {
       const ok = selectable(ds), on = picked.has(ds);
-      h += '<button type="button" class="day' + (on ? ' on' : '') + (ds === t ? ' today' : '') + (ds < FIRST_DAY ? ' old' : '') + '" data-d="' + ds + '"' + (ok ? '' : ' disabled') + ' aria-pressed="' + on + '">' + Number(ds.slice(8)) + '</button>';
+      h += '<button type="button" class="day' + (on ? ' on' : '') + (ds === t ? ' today' : '') + (ds < FIRST_DAY ? ' old' : '') + '" data-d="' + ds + '"' + (ok ? '' : ' disabled') + ' aria-pressed="' + on + '" aria-label="' + ds + '">' + Number(ds.slice(8)) + '</button>';
     });
-    $("cal").innerHTML = h;
+    return h + '</div></div>';
+  }
+  function renderCal() {
+    const t = realToday(), [a, b] = winMonths();
+    const [na, ya] = monthName(a).split(" "), [nb, yb] = monthName(b).split(" ");
+    $("calTitle").textContent = ya === yb ? na + " – " + nb + " " + yb : monthName(a) + " – " + monthName(b);
+    $("calPrev").disabled = a <= monthKey("2026-01-01");
+    $("calNext").disabled = b >= monthKey(t);
+    $("cal").innerHTML = monthGrid(a, t) + monthGrid(b, t);
     calcTotal();
   }
   function calcTotal() {
-    const days = [...picked].filter(d => monthKey(d) === calMonth).sort();
+    const win = winMonths();
+    const days = [...picked].filter(d => win.includes(monthKey(d))).sort();
     let sum = 0, used = 0, missing = 0, oldN = 0;
     days.forEach(d => { const r = dayPay(d); if (r) { sum += r.pay; used++; if (r.old) oldN++; } else missing++; });
     $("calCount").textContent = days.length ? days.length + (days.length === 1 ? " day selected" : " days selected") : "No days selected";
     $("estOut").textContent = fmt(sum) + " LBP";
     const parts = [];
     if (used - oldN > 0) parts.push(method === "current"
-      ? "Days from 23 October 2026 use this month's prices up to each day, so later days can differ."
+      ? "Days from 23 October 2026 use that month's prices up to each day, so later days can differ."
       : (prevMonthKey(calMonth) < monthKey(FIRST_DAY) ? "Days from 23 October 2026 use last month's rate, the fixed 450,000 LBP." : "Days from 23 October 2026 use the " + monthName(prevMonthKey(calMonth)) + " average (last month's prices), the same amount for each of them."));
     if (oldN) parts.push((oldN === 1 ? "1 day" : oldN + " days") + " before 23 October 2026 " + (oldN === 1 ? "uses" : "use") + " the previous fixed rate of 450,000 LBP a day.");
     if (missing) parts.push(missing + (missing === 1 ? " selected day isn't" : " selected days aren't") + " included: there's no " + (method === "current" ? "price" : "last-month average") + " for " + (missing === 1 ? "it" : "them") + " yet.");
@@ -606,10 +617,10 @@ tr.ref td.num { color: var(--muted); }
   $("calPrev").addEventListener("click", () => { calMonth = prevMonthKey(calMonth); renderCal(); });
   $("calNext").addEventListener("click", () => { calMonth = nextMonthKey(calMonth); renderCal(); });
   $("calWeekdays").addEventListener("click", () => {
-    monthDays(calMonth).forEach(ds => { const wd = new Date(ds + "T00:00:00").getDay(); if (selectable(ds) && wd >= 1 && wd <= 5) picked.add(ds); });
+    winMonths().forEach(k => monthDays(k).forEach(ds => { const wd = new Date(ds + "T00:00:00").getDay(); if (selectable(ds) && wd >= 1 && wd <= 5) picked.add(ds); }));
     renderCal();
   });
-  $("calClear").addEventListener("click", () => { monthDays(calMonth).forEach(ds => picked.delete(ds)); renderCal(); });
+  $("calClear").addEventListener("click", () => { winMonths().forEach(k => monthDays(k).forEach(ds => picked.delete(ds))); renderCal(); });
 
   const anim = { done: false, start: 0, target: 0 };
   let pumpFixed = false;
