@@ -151,7 +151,8 @@ tr.ref td.num { color: var(--muted); }
 .cal-bar b { font-family: var(--display); font-size: 17px; }
 .calnav { font: 600 22px/1 var(--body); width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--line); background: var(--accent-soft); color: var(--accent); cursor: pointer; }
 .calnav:disabled { opacity: .35; cursor: default; }
-.cal-quick { display: flex; gap: 16px; }
+.calm-h { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 14px; }
+.calm-q { display: flex; gap: 14px; }
 .linkbtn { font: inherit; font-size: 13px; font-weight: 600; color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .cal-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; max-width: 880px; }
 .cal-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 28px; max-width: 880px; }
@@ -314,10 +315,6 @@ input[type=date], input[type=number], input[type=text], textarea, select { font-
       <button type="button" class="calnav" id="calPrev" aria-label="Previous month">&#8249;</button>
       <b id="calTitle"></b>
       <button type="button" class="calnav" id="calNext" aria-label="Next month">&#8250;</button>
-    </div>
-    <div class="cal-quick">
-      <button type="button" class="linkbtn" id="calWeekdays">Select Mon to Fri</button>
-      <button type="button" class="linkbtn" id="calClear">Clear</button>
     </div>
     <div class="cal-pair" id="cal" role="group" aria-label="Days you went to work"></div>
     <div class="est-out">
@@ -578,7 +575,9 @@ input[type=date], input[type=number], input[type=text], textarea, select { font-
   function monthGrid(k, t) {
     const [y, m] = k.split("-").map(Number);
     const lead = (new Date(y, m - 1, 1).getDay() + 6) % 7;
-    let h = '<div class="calm"><div class="calm-t">' + monthName(k) + '</div><div class="cal">';
+    let h = '<div class="calm"><div class="calm-h"><span class="calm-t">' + monthName(k) + '</span><span class="calm-q">' +
+      '<button type="button" class="linkbtn" data-act="wd" data-m="' + k + '">Select Mon to Fri</button>' +
+      '<button type="button" class="linkbtn" data-act="clr" data-m="' + k + '">Clear</button></span></div><div class="cal">';
     h += ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(d => '<span class="dow">' + d + '</span>').join("");
     for (let i = 0; i < lead; i++) h += '<span></span>';
     monthDays(k).forEach(ds => {
@@ -612,17 +611,16 @@ input[type=date], input[type=number], input[type=text], textarea, select { font-
     $("estNote").textContent = parts.join(" ");
   }
   $("cal").addEventListener("click", (e) => {
+    const q = e.target.closest("button.linkbtn");
+    if (q) { if (q.dataset.act === "wd") selectWeekdays(q.dataset.m); else clearMonth(q.dataset.m); return; }
     const b = e.target.closest("button.day"); if (!b || b.disabled) return;
     const d = b.dataset.d; if (picked.has(d)) picked.delete(d); else picked.add(d);
     b.classList.toggle("on"); b.setAttribute("aria-pressed", String(picked.has(d))); calcTotal();
   });
   $("calPrev").addEventListener("click", () => { calMonth = prevMonthKey(calMonth); renderCal(); });
   $("calNext").addEventListener("click", () => { calMonth = nextMonthKey(calMonth); renderCal(); });
-  $("calWeekdays").addEventListener("click", () => {
-    winMonths().forEach(k => monthDays(k).forEach(ds => { const wd = new Date(ds + "T00:00:00").getDay(); if (selectable(ds) && wd >= 1 && wd <= 5) picked.add(ds); }));
-    renderCal();
-  });
-  $("calClear").addEventListener("click", () => { winMonths().forEach(k => monthDays(k).forEach(ds => picked.delete(ds))); renderCal(); });
+  function selectWeekdays(k) { monthDays(k).forEach(ds => { const wd = new Date(ds + "T00:00:00").getDay(); if (selectable(ds) && wd >= 1 && wd <= 5) picked.add(ds); }); renderCal(); }
+  function clearMonth(k) { monthDays(k).forEach(ds => picked.delete(ds)); renderCal(); }
 
   const anim = { done: false, start: 0, target: 0 };
   let pumpFixed = false;
