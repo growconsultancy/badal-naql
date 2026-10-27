@@ -534,8 +534,8 @@ input[type=date], input[type=number], input[type=text], textarea, select { font-
     const mk = monthKey(day);
     let set, label;
     if (how === "current") {
-      set = pool.filter(p => monthKey(p.date) === mk && p.date <= day);
-      label = monthName(mk) + ", schedules up to " + day;
+      set = pool.filter(p => monthKey(p.date) === mk && p.date <= realToday());
+      label = monthName(mk) + " average";
       if (!set.length) {
         const before = pool.filter(p => p.date <= day);
         if (before.length) { set = [before[before.length - 1]]; label = "No " + monthName(mk) + " schedule yet; last price in force (" + set[0].date + ")"; }
@@ -604,7 +604,7 @@ input[type=date], input[type=number], input[type=text], textarea, select { font-
     $("estOut").textContent = fmt(sum) + " LBP";
     const parts = [];
     if (used - oldN > 0) parts.push(method === "current"
-      ? "Days from 23 October 2026 use that month's prices up to each day, so later days can differ."
+      ? "Days from 23 October 2026 get the same amount for every day of the month, based on that month's average fuel price. It updates when a new price is published."
       : (prevMonthKey(calMonth) < monthKey(FIRST_DAY) ? "Days from 23 October 2026 use last month's rate, the fixed 450,000 LBP." : "Days from 23 October 2026 use the " + monthName(prevMonthKey(calMonth)) + " average (last month's prices), the same amount for each of them."));
     if (oldN) parts.push((oldN === 1 ? "1 day" : oldN + " days") + " before 23 October 2026 " + (oldN === 1 ? "uses" : "use") + " the previous fixed rate of 450,000 LBP a day.");
     if (missing) parts.push(missing + (missing === 1 ? " selected day isn't" : " selected days aren't") + " included: there's no " + (method === "current" ? "price" : "last-month average") + " for " + (missing === 1 ? "it" : "them") + " yet.");
